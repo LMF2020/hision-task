@@ -13,7 +13,7 @@ public class Const {
 
 	private static final Log log = Logs.get();
 
-	public static final String SEND_CMD_PATTERN = "cmd=set task by name;name={CODE}.xml;";
+	public static final String SEND_CMD_PATTERN = "cmd=set task by name;name={CODE}.xml";
 
 	// 缓存任务列表(后期采用LRU模型, 如果是多任务需要引入memcached)
 	public static Map<String, TaskStatus> taskCache = Maps.newConcurrentMap();
@@ -69,7 +69,13 @@ public class Const {
 		}
 
 		// 解析任务报文
-		TaskStatus me = TaskStatus.ofme(respCode);
+		TaskStatus me = null;
+		try {
+			me = TaskStatus.ofme(respCode);
+		} catch (Exception e) {
+			log.error("正在解析报文：报文解析任务出错：" + respCode);
+			throw e;
+		}
 		String taskName = me.getTask();
 
 		// 查找缓存是否存在该任务

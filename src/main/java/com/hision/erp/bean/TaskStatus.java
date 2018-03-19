@@ -20,8 +20,9 @@ public class TaskStatus {
 	 * @return
 	 */
 	public static TaskStatus ofme(String respCode) {
+		
 		TaskStatus me = new TaskStatus();
-		String[] kv = respCode.split(";");
+		String[] kv = respCode.trim().split(";");
 
 		for (String item : kv) {
 			String[] pair = item.split("=");

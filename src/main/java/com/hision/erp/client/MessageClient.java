@@ -48,15 +48,19 @@ public class MessageClient {
 	private AioClient aioClient = null;
 	private ClientChannelContext clientChannelContext = null;
 
+	/**
+	 * 程序启动后初始化连接
+	 * @throws Exception
+	 */
 	public void connect() throws Exception {
 		// 连接服务器
-		Node serverNode = new Node(conf.get("server.socket.host"), conf.getInt("server.socket.port"));
+		Node serverNode = new Node(conf.get("io.socket.host"), conf.getInt("io.socket.port"));
 		clientGroupContext = new ClientGroupContext(messageClientAioHandler, aioListener, reconnConf);
 		clientGroupContext.setHeartbeatTimeout(Const.TIMEOUT);
 		aioClient = new AioClient(clientGroupContext);
 		clientChannelContext = aioClient.connect(serverNode);
 
-		log.info("服务器连接成功：" + conf.get("server.socket.host") + ":" + conf.getInt("server.socket.port"));
+		log.info("正在尝试连接服务器：" + conf.get("io.socket.host") + ":" + conf.getInt("io.socket.port"));
 	}
 
 	public synchronized Result send(String message) throws Exception {
@@ -64,11 +68,12 @@ public class MessageClient {
 		message = Const.createSendCommad(message);
 		// 发送消息
 		if (clientChannelContext == null || clientChannelContext.isClosed()) {
+			log.error("正在发送命令：但服务器尚未连接成功");
 			return Result.error("服务器连接失败");
 		}
 
 		// 判断是否有任务正在执行
-		if (checkHasTaskRunning()) {
+		if (checkHasTaskUnfinished()) {
 			// 拿出正在执行的任务，返回给界面
 			TaskStatus taskStatus = Const.getCurrentUnfinishedTask();
 			log.error("正在发送命令：但是当前有任务正在执行，不能发送新任务：TASK： " + taskStatus.getTask() + "，CMD：" + taskStatus.getCmd());
@@ -93,7 +98,7 @@ public class MessageClient {
 	 * 
 	 * @return
 	 */
-	private boolean checkHasTaskRunning() {
+	private boolean checkHasTaskUnfinished() {
 
 		// 当前没有任务，返回false
 		if (Strings.isBlank(Const.CURRENT_TASK)) {
