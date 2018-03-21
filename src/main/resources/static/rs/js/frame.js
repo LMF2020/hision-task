@@ -1,5 +1,9 @@
 $(function() {
 
+	jsPlumb.ready(function() {
+
+	});
+
 	var _all_start_btn = $('#start_site button')
 	var _all_end_btn = $('#end_site button')
 
@@ -43,6 +47,9 @@ $(function() {
 				return
 			}
 			setDefalutTask(startText + '-' + endText)
+			// 设置连线
+			resetConnect()
+			connectLine(startPos, endPos)
 		}
 		_all_start_btn.removeClass('active')
 		startPos.addClass('active')
@@ -70,6 +77,9 @@ $(function() {
 		endPos.addClass('active')
 		// 设置任务
 		setDefalutTask(startText + '-' + endText)
+		// 设置连线
+		resetConnect()
+		connectLine(startPos, endPos)
 	})
 
 	// 前置任务
@@ -87,6 +97,7 @@ $(function() {
 		_all_start_btn.removeClass('active')
 		_all_end_btn.removeClass('active')
 		setDefalutTask()
+		resetConnect()
 	})
 
 	// 结束任务
@@ -162,6 +173,25 @@ $(function() {
 					COMJS.success(resp.msg);
 				}
 			});
+	}
+
+	var connectLine = function(startPos, endPos) {
+		jsPlumb.connect({
+			source: startPos[0],
+			target: endPos[0],
+			anchors: ["BottomRight", "TopLeft"],
+			paintStyle: {
+				strokeWidth: 1,
+				stroke: '#346b41'
+			},
+			endpointStyle: {
+				fill: 'rgb(243,229,0)'
+			}
+		});
+	}
+	
+	var resetConnect = function(){
+		jsPlumb.deleteEveryEndpoint ()
 	}
 
 })
