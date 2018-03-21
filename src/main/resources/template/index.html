@@ -1,32 +1,144 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 	<head>
 		<meta charset="utf-8" />
-		<title>Hision TaskScheduler</title>
-		<link rel="stylesheet" type="text/css" href="/rs/lib/layui/css/layui.css" />
-		<link rel="stylesheet" type="text/css" href="/rs/css/frame.css" />
-		<link rel="stylesheet" type="text/css" href="/rs/css/scrollbar.css" />
+		<title>海天精工任务调度系统</title>
+		<link rel="stylesheet" href="/rs/lib/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/rs/lib/open-iconic/font/css/open-iconic-bootstrap.min.css">
+		<link rel="stylesheet" href="/rs/css/frame.css" />
 	</head>
 
-	<body class="layui-layout-body">
-		<div class="layui-layout layui-layout-admin">
-			<div class="layui-header">
-				<div class="layui-logo">宁波海天货位调度系统</div>
-			</div>
-			<div id="desk" class="layui-body layui-bg-cyan demo-sc" style="left: 0;overflow-x: auto;">
-				<!-- main Content start-->
-				<!-- main Content end-->
-			</div>
-			<div class="layui-footer footer copyright-custom">
-				<p>Copyright (C) 2017- 版权所有：宁波海天精工股份有限公司 All Rights Reserved</p>
-				<!--<p>电话： 传真：0574-86182518 地址：中国宁波大港工业城黄山西路235号</p>	-->
+	<body>
+		<div class="container-fluid">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<a class="navbar-brand" href="#">海天精工任务调度系统</a>
+			</nav>
+			<div class="row" style="margin-top: 20px;">
+				<div class="col-sm-3">
+					<div class="card border-success mb-3" style="max-width: 18rem;">
+						<div class="card-header">
+							<p class="lead">起始站点选择</p>
+						</div>
+						<div class="card-body text-success">
+							<div id="start_site">
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action">A1</button>
+									<button type="button" class="list-group-item list-group-item-action">A2</button>
+									<button type="button" class="list-group-item list-group-item-action">A3</button>
+									<button type="button" class="list-group-item list-group-item-action">A4</button>
+								</div>
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action">B1</button>
+									<button type="button" class="list-group-item list-group-item-action">B2</button>
+									<button type="button" class="list-group-item list-group-item-action">B3</button>
+									<button type="button" class="list-group-item list-group-item-action">B4</button>
+								</div>
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action" disabled>C1</button>
+									<button type="button" class="list-group-item list-group-item-action">C2</button>
+									<button type="button" class="list-group-item list-group-item-action">C3</button>
+									<button type="button" class="list-group-item list-group-item-action">C4</button>
+								</div>
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action">D1</button>
+									<button type="button" class="list-group-item list-group-item-action">D2</button>
+									<button type="button" class="list-group-item list-group-item-action">D3</button>
+									<button type="button" class="list-group-item list-group-item-action">D4</button>
+								</div>
+								<div class="list-group">
+									<button type="button" class="list-group-item list-group-item-action">Z1</button>
+									<button type="button" class="list-group-item list-group-item-action">Z2</button>
+									<button type="button" class="list-group-item list-group-item-action">Z3</button>
+									<button type="button" class="list-group-item list-group-item-action">Z4</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="col-sm-3">
+
+					<div class="card border-success mb-3" style="max-width: 18rem;">
+						<div class="card-header">
+							<p class="lead">目标站点选择</p>
+						</div>
+						<div class="card-body text-success">
+							<div id="end_site">
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action">A1</button>
+									<button type="button" class="list-group-item list-group-item-action">A2</button>
+									<button type="button" class="list-group-item list-group-item-action">A3</button>
+									<button type="button" class="list-group-item list-group-item-action">A4</button>
+								</div>
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action">B1</button>
+									<button type="button" class="list-group-item list-group-item-action">B2</button>
+									<button type="button" class="list-group-item list-group-item-action">B3</button>
+									<button type="button" class="list-group-item list-group-item-action">B4</button>
+								</div>
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action" disabled>C1</button>
+									<button type="button" class="list-group-item list-group-item-action">C2</button>
+									<button type="button" class="list-group-item list-group-item-action">C3</button>
+									<button type="button" class="list-group-item list-group-item-action">C4</button>
+								</div>
+								<div class="list-group mb8">
+									<button type="button" class="list-group-item list-group-item-action">D1</button>
+									<button type="button" class="list-group-item list-group-item-action">D2</button>
+									<button type="button" class="list-group-item list-group-item-action">D3</button>
+									<button type="button" class="list-group-item list-group-item-action">D4</button>
+								</div>
+								<div class="list-group">
+									<button type="button" class="list-group-item list-group-item-action">Z1</button>
+									<button type="button" class="list-group-item list-group-item-action">Z2</button>
+									<button type="button" class="list-group-item list-group-item-action">Z3</button>
+									<button type="button" class="list-group-item list-group-item-action">Z4</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<h2 class="display-4 mb-5">AGV前置任务</h2>
+					<div id="pre_task">
+						<button id="0A-0A" type="button" class="btn btn-outline-success btn-lg">调头</button>
+						<button id="0A-0B" type="button" class="btn btn-outline-success btn-lg">A站到B站</button>
+						<button id="0A-0C" type="button" class="btn btn-outline-success btn-lg">A站到C站</button>
+						<button id="0A-0D" type="button" class="btn btn-outline-success btn-lg">A站到D站</button>
+						<button id="0A-0Z" type="button" class="btn btn-outline-success btn-lg">A站到Z站</button>
+					</div>
+					<hr />
+					<h2 class="display-4 mb-5">起始站点 -> 目标站点</h2>
+					<div class="alert alert-success" role="alert" id="task">
+						您当前尚未选择起始站点与目标站点
+					</div>
+					<input class="btn btn-outline-primary" id="submit_task" value="提交任务">
+					<input class="btn btn-outline-primary" id="clear_task" value="重新选择">
+					<hr />
+					<h2 class="display-4 mb-5">任务状态</h2>
+					<div class="alert alert-success" role="alert">
+						<h4 class="alert-heading">当前没有任务在执行</h4>
+						<p>这里显示报过来的一些状态</p>
+						<hr>
+						<p class="mb-0">这里显示AGV的电量</p>
+					</div>
+					<hr />
+					<h2 class="display-4 mb-5">其他操作</h2>
+					<button class="btn btn-outline-danger" id="end_task">结束任务</button>
+					<button class="btn btn-outline-danger" id="rec_task">恢复任务</button>
+					<button class="btn btn-outline-danger" id="reboot_task">系统恢复</button>
+					<hr />
+					<footer class="blockquote-footer">系统恢复：AGV已经没有任务在运行，但是系统却不能发送任务，此时系统可能出现故障，执行 <span class="text-danger">系统恢复</span>  以保证系统恢复正常</footer>
+				</div>
 			</div>
 		</div>
-
-		<script src="/rs/lib/layui/layui.js" type="text/javascript" charset="utf-8"></script>
-		<script src="/rs/js/frame.js" type="text/javascript" charset="utf-8"></script>
-
+		<script src="/rs/lib/jquery.min.js"></script>
+		<script src="/rs/lib/popper.min.js"></script>
+		<script src="/rs/lib/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/rs/lib/layer/layer.js"></script>
+		<script src="/rs/js/com.js"></script>
+		<script src="/rs/js/frame.js"></script>
 	</body>
 
 </html>

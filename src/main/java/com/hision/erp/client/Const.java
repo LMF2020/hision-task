@@ -14,6 +14,8 @@ public class Const {
 	private static final Log log = Logs.get();
 
 	public static final String SEND_CMD_PATTERN = "cmd=set task by name;name={CODE}.xml";
+	public static final String END_CMD_PATTERN = "cmd=pause;pauseStat=1";
+	public static final String REC_CMD_PATTERN = "cmd=pause;pauseStat=0";
 
 	// 缓存任务列表(后期采用LRU模型, 如果是多任务需要引入memcached)
 	public static Map<String, TaskStatus> taskCache = Maps.newConcurrentMap();
@@ -27,13 +29,24 @@ public class Const {
 	public static final int TIMEOUT = 5000;
 
 	/**
-	 * 获取发送的报文
-	 * 
-	 * @param code
-	 * @return
+	 * 发送的报文
 	 */
 	public static String createSendCommad(String reqCode) {
 		return SEND_CMD_PATTERN.replace("{CODE}", reqCode);
+	}
+
+	/**
+	 * 结束报文
+	 */
+	public static String createEndCommad() {
+		return END_CMD_PATTERN;
+	}
+
+	/**
+	 * 恢复报文
+	 */
+	public static String createRecCommad() {
+		return REC_CMD_PATTERN;
 	}
 
 	/**

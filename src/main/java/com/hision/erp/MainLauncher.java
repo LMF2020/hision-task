@@ -10,10 +10,14 @@ import org.nutz.lang.Encoding;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.By;
+import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.filter.CrossOriginFilter;
 
 import com.hision.erp.client.Const;
 import com.hision.erp.client.MessageClient;
+import com.hision.erp.util.Result;
 
 /**
  * Launcher Created by Jed on 2018/03/17.
@@ -46,12 +50,56 @@ public class MainLauncher {
 
 		try {
 			messageClient.connect();
-			messageClient.send(conf.get("test.scheduled.task"));
+			// messageClient.send(conf.get("test.scheduled.task"));
 
 		} catch (Exception e) {
 			log.error("连接服务器失败: " + Const.getStackMsg(e));
 		}
 
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/sendCommand/?")
+	@Ok("json")
+	public Result sendCommand(String command) {
+		try {
+			return messageClient.send(command);
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/endCommand")
+	@Ok("json")
+	public Result endCommand() {
+		try {
+			return messageClient.end();
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/recCommand")
+	@Ok("json")
+	public Result recCommand() {
+		try {
+			return messageClient.recover();
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/resetCommand")
+	@Ok("json")
+	public Result resetCommand() {
+		try {
+			return messageClient.reset();
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
 	}
 
 	public void depose() {

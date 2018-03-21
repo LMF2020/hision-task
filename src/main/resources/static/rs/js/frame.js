@@ -1,93 +1,167 @@
-layui.config({
-	base: '/rs/js/'
-}).extend({
-	// 加載自定義模塊
-	CommJS: 'common'
-})
+$(function() {
 
-layui.use(['jquery', 'layer', 'laytpl', 'form', 'table', 'upload', 'element', 'CommJS'], function() {
+	var _all_start_btn = $('#start_site button')
+	var _all_end_btn = $('#end_site button')
 
-	var $ = layui.$,
-		layer = layui.layer,
-		form = layui.form,
-		table = layui.table,
-		element = layui.element,
-		laytpl = layui.laytpl,
-		upload = layui.upload,
-		CommJS = layui.CommJS;
-
-
-
-	// 根据物料查询所在货架
-	$('#searchShelfViaMa').click(function(e){
-		e.preventDefault();
-		var conf = {
-			htmUrl: CommJS.HTM_TPL.htm_searchShelfViaMa, // 模板路径
-			title: false,
-			shadeClose: true, //点击遮罩关闭
-			closeBtn: 0, // 不显示右上角关闭按钮
-			skin: 'layer-unvisiable', //自定义class
-			area: ['550px', '80px'],
-			success: function(layero, index) {
-				form.on('submit(searchShelfViaMa)', function(data) {
-					$('#searchShelfViaMa .lay-submit').addClass('layui-disabled')
-					$.ajax({
-							method: "GET",
-							url: CommJS.CTX_PATH + "/material/searchShelfViaMa/" + data.field.code
-						})
-						.done(function(resp) {
-							$('#searchShelfViaMa .lay-submit').removeClass('layui-disabled')
-							if(resp.code == 1) {
-								CommJS.error(resp.msg);
-							} else {
-								// 查询成功后后高亮货架
-								console.log('查询成功',resp)
-								if(resp.data.length == 0){
-									// TODO: 没有判断物料是否存在
-									CommJS.success('该物料不存在或者未上架');
-								}else{
-									showSelectedShelf(resp.data);
-								}
-								
-							}
-						});
-
-					return false;
-				});
-			}
+	var setDefalutTask = function(val) {
+		if(val) {
+			$('#task').text(val)
+		} else {
+			$('#task').text('您当前尚未选择起始站点与目标站点')
 		}
-		CommJS.readform(conf);
-		
+	}
+
+	setDefalutTask()
+
+	// 获取起始点选中项
+	var getStartPos = function() {
+		var selectedbtns = _all_start_btn.filter('.active')
+		if(selectedbtns.length === 0) {
+			return null
+		}
+		return $(selectedbtns[0])
+	}
+
+	// 获取结束点选中项
+	var getEndPos = function() {
+		var selectedbtns = _all_end_btn.filter('.active')
+		if(selectedbtns.length === 0) {
+			return null
+		}
+		return $(selectedbtns[0])
+	}
+
+	// 选择起始点
+	_all_start_btn.click(function() {
+		var startPos = $(this)
+		var endPos = getEndPos()
+		if(endPos) { // 如果目标站点有值的话
+			var endText = endPos.text()
+			var startText = startPos.text()
+			if(startText == endText) {
+				COMJS.alert("起始站点不能与目标站点相同")
+				return
+			}
+			setDefalutTask(startText + '-' + endText)
+		}
+		_all_start_btn.removeClass('active')
+		startPos.addClass('active')
 	})
-	
 
-	// 初始化桌面
+	// 选择结束点
+	_all_end_btn.click(function() {
+		var endPos = $(this)
+		var startPos = getStartPos()
+		if(!startPos) {
+			COMJS.alert("请选择起始站点")
+			return
+		}
 
-	// 调试模式启用
-	//	$.ajax({
-	//		dataType: "json",
-	//		url: 'test/desk.json',
-	//		data: "",
-	//		success: function(data) {
-	//			inner_updateDesktop(data);
-	//		}
-	//	});
-	// 服务端请求
-//	$.ajax({
-//			method: "GET",
-//			url: CommJS.CTX_PATH + "/settings/init"
-//		})
-//		.done(function(resp) {
-//			if(resp.code == 1) {
-//				CommJS.error(resp.msg);
-//			} else {
-//				console.log("桌面数据更新: ", resp);
-//				// 更新桌面
-//				inner_updateDesktop({
-//					rowList: resp.data
-//				});
-//				CommJS.alert('桌面数据更新成功<br>欢迎访问海天物料管理系统!<br>窗口15s后自动关闭');
-//			}
-//		});
+		var startText = startPos.text()
+		var endText = endPos.text()
 
-});
+		if(startText == endText) {
+			COMJS.alert("目标站点不能与起始站点相同")
+			return
+		}
+
+		// 选中结束站点
+		_all_end_btn.removeClass('active')
+		endPos.addClass('active')
+		// 设置任务
+		setDefalutTask(startText + '-' + endText)
+	})
+
+	// 前置任务
+	$("#pre_task button").click(function() {
+		var me = $(this);
+		var task = me.attr('id')
+		var command = me.text()
+		COMJS.confirm('您确认提交前置任务吗? AGV路线 →' + command, function() {
+			sendCommand(task)
+		})
+	})
+
+	// 重新选择
+	$('#clear_task').click(function() {
+		_all_start_btn.removeClass('active')
+		_all_end_btn.removeClass('active')
+		setDefalutTask()
+	})
+
+	// 结束任务
+	$("#end_task").click(function() {
+		COMJS.confirm('您确认要结束任务吗? 结束前请确保有任务在执行', function() {
+			otherCommand(0)
+		})
+	})
+
+	// 恢复任务
+	$("#rec_task").click(function() {
+		COMJS.confirm('您确认要恢复任务吗?', function() {
+			otherCommand(1)
+		})
+	})
+
+	// 系统恢复
+	// 没有任务在运行，但是发送不了命令
+	$("#reboot_task").click(function() {
+		COMJS.confirm('您确认要恢复系统吗? ', function() {
+			otherCommand(2)
+		})
+	})
+
+	// 提交
+	$('#submit_task').click(function() {
+		var startPos = getStartPos()
+		var endPos = getEndPos()
+		if(!startPos || !endPos) {
+			COMJS.alert('请选择→ 起始站点 → 目标站点')
+			return
+		}
+		var startText = startPos.text()
+		var endText = endPos.text()
+		var command = startText + '-' + endText
+		COMJS.confirm('您确定提交任务吗? <span class="bg-danger text-white">提交前请确保前置任务已经执行完毕</span> AGV路线→' + command, function() {
+			sendCommand(command)
+		})
+
+	})
+
+	var sendCommand = function(cmd) {
+		$.ajax({
+				method: "GET",
+				url: COMJS.CTX_PATH + "/task/sendCommand/" + cmd
+			})
+			.done(function(resp) {
+				if(resp.code == 1) {
+					COMJS.error(resp.msg);
+				} else {
+					COMJS.success(resp.msg);
+				}
+			});
+	}
+
+	// flag : 0-end; 1-recorver; 2-end;
+	var otherCommand = function(flag) {
+		var cmd = "/task/endCommand"
+		if(flag === 1) {
+			cmd = "/task/recCommand"
+		} else if(flag === 2) {
+			cmd = "/task/resetCommand"
+		}
+
+		$.ajax({
+				method: "GET",
+				url: COMJS.CTX_PATH + cmd
+			})
+			.done(function(resp) {
+				if(resp.code == 1) {
+					COMJS.error(resp.msg);
+				} else {
+					COMJS.success(resp.msg);
+				}
+			});
+	}
+
+})
