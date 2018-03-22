@@ -95,8 +95,8 @@ public class MessageClient {
 			log.error("正在恢复命令：但服务器尚未连接成功");
 			return Result.error("服务器连接失败");
 		}
-		// 有任务在执行才能结束
-		if (!checkHasTaskUnfinished()) {
+		// 有任务在执行才能恢复
+//		if (!checkHasTaskUnfinished()) {
 			// TaskStatus taskStatus = Const.getCurrentUnfinishedTask();
 
 			MessagePacket packet = new MessagePacket();
@@ -108,9 +108,9 @@ public class MessageClient {
 			Aio.bSend(clientChannelContext, packet);
 			log.info("正在恢复命令：" + message);
 			return Result.success("恢复命令发送成功!");
-		} else {
-			return Result.error("有任务在执行，没法执行恢复操作");
-		}
+//		} else {
+//			return Result.error("有任务在执行，没法执行恢复操作");
+//		}
 	}
 
 	/**

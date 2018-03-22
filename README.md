@@ -11,5 +11,5 @@ MainLauncher是入口,启动即可
 
 ## 配置信息位置
 
-数据库配置信息,jetty端口等配置信息,均位于src/main/resources/application.properties
+mvn clean package 打包后 ，服务器通讯端口和IP在 config/app.properties里面配置
 
