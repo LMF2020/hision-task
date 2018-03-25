@@ -2,11 +2,15 @@ package com.hision.erp.client;
 
 import java.util.Map;
 
+import org.nutz.dao.Cnd;
+import org.nutz.dao.Dao;
 import org.nutz.lang.Strings;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
+import org.nutz.mvc.Mvcs;
 
 import com.google.common.collect.Maps;
+import com.hision.erp.bean.TaskSite;
 import com.hision.erp.bean.TaskStatus;
 
 public class Const {
@@ -70,15 +74,23 @@ public class Const {
 	 * @param respCode
 	 * @return
 	 */
-	public static void updateTaskStatus(String respCode) {
+	public static TaskStatus updateTaskStatus(String respCode) {
+
+		// Only for test
+/*		TaskStatus bean = new TaskStatus();
+		bean.setTask("A0-B2.xml");
+		bean.setTask_isfinished(1);
+		updateSiteStatus(bean);*/
+		// Only for test
+
 		if (Strings.isBlank(respCode)) {
 			log.error("返回报文：空报文");
-			return;
+			return null;
 		}
 		if (!respCode.contains("cmd=") || !respCode.contains("battery=") || !respCode.contains("task_isfinished=")
 				|| !respCode.contains("task=")) {
 			log.error("返回报文格式错误：" + respCode);
-			return;
+			return null;
 		}
 
 		// 解析任务报文
@@ -106,7 +118,36 @@ public class Const {
 		}
 
 		log.info("正在解析报文: 设置当前正在执行的缓存任务：" + taskName);
+
+		// 更新缓存
 		CURRENT_TASK = taskName;
+
+		if (me.isTaskDone()) {
+			// 更新库表：满仓
+			updateSiteStatus(me);
+		}
+
+		return me;
+	}
+
+	// 更新库表：满仓
+	private static void updateSiteStatus(TaskStatus me) {
+
+		String task = me.getTask();
+
+		if (Strings.isNotBlank(task) && task.contains("-") && task.contains(".xml")) {
+
+			String site = getSite(task);
+			Dao dao = Mvcs.ctx().getDefaultIoc().get(Dao.class);
+			TaskSite bean = new TaskSite(site, 1);
+			dao.update(bean);
+		}
+	}
+
+	private static String getSite(String taskName) {
+		int st = taskName.indexOf("-");
+		int ed = taskName.indexOf(".xml");
+		return taskName.substring(st + 1, ed);
 	}
 
 	/**

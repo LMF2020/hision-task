@@ -1,21 +1,31 @@
 package com.hision.erp.client;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.log.Log;
 import org.nutz.log.Logs;
 import org.tio.client.intf.ClientAioHandler;
+import org.tio.core.Aio;
 import org.tio.core.ChannelContext;
 import org.tio.core.GroupContext;
 import org.tio.core.exception.AioDecodeException;
 import org.tio.core.intf.Packet;
+import org.tio.server.ServerGroupContext;
+import org.tio.utils.json.Json;
+import org.tio.websocket.common.WsResponse;
+
+import com.hision.erp.bean.TaskStatus;
 
 @IocBean
 public class MessageClientAioHandler implements ClientAioHandler {
 
 	private static final Log log = Logs.get();
 	private static MessagePacket heartbeatPacket = new MessagePacket();
+
+	// 推送服务
+	private ServerGroupContext wsGroupCtx;
 
 	/**
 	 * 接收端解码: 字节转换成可发送的消息
@@ -69,8 +79,10 @@ public class MessageClientAioHandler implements ClientAioHandler {
 		if (body != null) {
 			String respCode = new String(body, MessagePacket.CHARSET);
 			// 实时更新服务器返回的报文
-			Const.updateTaskStatus(respCode);
+			TaskStatus taskStatus = Const.updateTaskStatus(respCode);
 			log.info("收到服务器消息：" + respCode);
+			// 推送给客户端
+			messagePush(taskStatus);
 		}
 	}
 
@@ -80,6 +92,22 @@ public class MessageClientAioHandler implements ClientAioHandler {
 	@Override
 	public Packet heartbeatPacket() {
 		return heartbeatPacket;
+	}
+
+	public ServerGroupContext getWsGroupCtx() {
+		return wsGroupCtx;
+	}
+
+	public void setWsGroupCtx(ServerGroupContext wsGroupCtx) {
+		this.wsGroupCtx = wsGroupCtx;
+	}
+
+	// 后台消息推送
+	public void messagePush(TaskStatus taskStatus) throws UnsupportedEncodingException {
+		if (taskStatus != null) {
+			WsResponse resp = WsResponse.fromText(Json.toJson(taskStatus), MessagePacket.CHARSET);
+			Aio.sendToAll(wsGroupCtx, resp);
+		}
 	}
 
 }

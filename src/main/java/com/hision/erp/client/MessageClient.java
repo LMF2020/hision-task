@@ -12,10 +12,10 @@ import org.tio.client.AioClient;
 import org.tio.client.ClientChannelContext;
 import org.tio.client.ClientGroupContext;
 import org.tio.client.ReconnConf;
-import org.tio.client.intf.ClientAioHandler;
 import org.tio.client.intf.ClientAioListener;
 import org.tio.core.Aio;
 import org.tio.core.Node;
+import org.tio.server.ServerGroupContext;
 
 import com.hision.erp.bean.TaskStatus;
 import com.hision.erp.util.Result;
@@ -36,7 +36,7 @@ public class MessageClient {
 
 	// handler, 包括编码、解码、消息处理
 	@Inject
-	private ClientAioHandler messageClientAioHandler;
+	private MessageClientAioHandler messageClientAioHandler;
 
 	// 事件监听器，可以为null，但建议自己实现该接口，可以参考showcase了解些接口
 	private ClientAioListener aioListener = null;
@@ -55,8 +55,9 @@ public class MessageClient {
 	 * 
 	 * @throws Exception
 	 */
-	public void connect() throws Exception {
+	public void connect(ServerGroupContext serverGroupCtx) throws Exception {
 		// 连接服务器
+		messageClientAioHandler.setWsGroupCtx(serverGroupCtx);
 		Node serverNode = new Node(conf.get("io.socket.host"), conf.getInt("io.socket.port"));
 		clientGroupContext = new ClientGroupContext(messageClientAioHandler, aioListener, reconnConf);
 		clientGroupContext.setHeartbeatTimeout(Const.TIMEOUT);

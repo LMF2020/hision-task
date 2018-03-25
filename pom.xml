@@ -23,12 +23,21 @@
 			<artifactId>nutzboot-starter-nutz-mvc</artifactId>
 			<version>${nutzboot.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.nutz</groupId> <artifactId>nutzboot-starter-nutz-dao</artifactId> 
-			<version>${nutzboot.version}</version> </dependency> -->
-		<!-- <dependency> <groupId>org.nutz</groupId> <artifactId>nutzboot-starter-jdbc</artifactId> 
-			<version>${nutzboot.version}</version> </dependency> -->
-		<!-- <dependency> <groupId>com.alibaba</groupId> <artifactId>druid</artifactId> 
-			<version>1.1.5</version> </dependency> -->
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutzboot-starter-nutz-dao</artifactId>
+			<version>${nutzboot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nutz</groupId>
+			<artifactId>nutzboot-starter-jdbc</artifactId>
+			<version>${nutzboot.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.1.5</version>
+		</dependency>
 
 		<!-- <dependency> <groupId>org.nutz</groupId> <artifactId>nutzboot-starter-weixin</artifactId> 
 			<version>${nutzboot.version}</version> </dependency> -->
@@ -44,8 +53,11 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
-			<version>5.1.41</version> </dependency> -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.41</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -74,6 +86,13 @@
 			<artifactId>tio-core</artifactId>
 			<version>2.0.8.v20180205-RELEASE</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.t-io</groupId>
+			<artifactId>tio-websocket-server</artifactId>
+			<version>0.0.8-tio-websocket</version>
+		</dependency>
+
 	</dependencies>
 	<repositories>
 		<repository>

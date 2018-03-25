@@ -4,8 +4,8 @@ $(function() {
 
 	});
 
-	var _all_start_btn = $('#start_site button')
-	var _all_end_btn = $('#end_site button')
+	var _all_start_btn = $('#start_site .list-group-item')
+	var _all_end_btn = $('#end_site .list-group-item')
 
 	var setDefalutTask = function(val) {
 		if(val) {
@@ -57,8 +57,16 @@ $(function() {
 
 	// 选择结束点
 	_all_end_btn.click(function() {
+
 		var endPos = $(this)
+
+		if(endPos.hasClass('full')) {
+			COMJS.alert("目标站点已满仓")
+			return
+		}
+
 		var startPos = getStartPos()
+
 		if(!startPos) {
 			COMJS.alert("请选择起始站点")
 			return
@@ -153,7 +161,7 @@ $(function() {
 			});
 	}
 
-	// flag : 0-end; 1-recorver; 2-end;
+	// flag : 0-end; 1-recover; 2-end;
 	var otherCommand = function(flag) {
 		var cmd = "/task/endCommand"
 		if(flag === 1) {
@@ -189,9 +197,112 @@ $(function() {
 			}
 		});
 	}
-	
-	var resetConnect = function(){
-		jsPlumb.deleteEveryEndpoint ()
+
+	var resetConnect = function() {
+		jsPlumb.deleteEveryEndpoint()
+	}
+
+	// 连线重绘
+	// $(".btn-link").click(function(e) {
+	// e.preventDefault()
+	// resetConnect()
+	// var endPos = getEndPos()
+	// var startPos = getStartPos()
+	// if(startPos && endPos) {
+	// connectLine(startPos, endPos)
+	// }
+	// })
+
+	/**
+	 * WebSocket stream
+	 */
+	function getWsURI() {
+		var loc = window.location;
+		var uri = "ws://" + loc.host;
+		return uri.slice(0,uri.lastIndexOf(":")) + ":9321"
+	}
+
+	function connect() {
+		var ws_uri = getWsURI()
+		var ws = new WebSocket(ws_uri);
+		ws.onopen = function() {
+			console.log('WebSocket is connected')
+		};
+
+		ws.onmessage = function(e) {
+			console.log('Message:', e.data);
+			// 实时更新数据状态
+			var data = JSON.parse(e.data)
+			var name = data['task']
+			var isfinished = data['task_isfinished']
+			var battery = data['battery']
+			var error = data['task_error']
+
+			$("#current_task").text(name)
+			$("#current_status").text(isfinished == '1' ? '已停止' : '进行中')
+			$("#current_battery").text(battery + '%')
+
+		};
+
+		ws.onclose = function(e) {
+			console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+			setTimeout(function() {
+				connect();
+			}, 30000);
+		};
+
+		ws.onerror = function(err) {
+			console.error('Socket encountered error: ', err.message, 'Closing socket');
+			ws.close();
+		};
+	}
+
+	// WebSocket 连接
+	connect()
+
+	// 初始化仓库状态
+	sendRequestForUpdateStatus()
+
+	// 10s发一次请求，更新仓库状态
+	setInterval(function() {
+		sendRequestForUpdateStatus()
+	}, 10000);
+
+	function sendRequestForUpdateStatus() {
+		$.ajax({
+				method: "GET",
+				url: COMJS.CTX_PATH + "/task/refreshStatus/"
+			})
+			.done(function(resp) {
+				if(resp.code == 1) {
+					console.error(resp.msg);
+				} else {
+					renderSites(resp['data'])
+				}
+			});
+	}
+
+	function renderSites(arr) {
+		var len = arr.length;
+		for(var i = 0; i < len; i++) {
+			var site = arr[i];
+			var name = site['name'];
+			var status = site['status'];
+
+			// 判断Id站点是否存在
+			if($("#" + name).length > 0) {
+				// 判断站点状态是满仓还是空仓
+				if(status == 1) {
+					$("#" + name).removeClass('full').addClass('full');
+				} else {
+					$("#" + name).removeClass('full');
+				}
+
+			} else {
+				// 站点不存在，直接忽略，比如C1，或一体机
+			}
+
+		}
 	}
 
 })
