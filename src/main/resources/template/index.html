@@ -5,6 +5,7 @@
 		<meta charset="utf-8" />
 		<title>海天精工任务调度系统</title>
 		<link rel="stylesheet" href="/rs/lib/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/rs/lib/bootstrap-table/bootstrap-table.min.css" />
 		<link rel="stylesheet" href="/rs/lib/open-iconic/font/css/open-iconic-bootstrap.min.css">
 		<link rel="stylesheet" href="/rs/css/frame.css" />
 	</head>
@@ -28,7 +29,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseA">
-								           A站点
+								          起点站
 								        </button>
 								      </h5>
 									</div>
@@ -50,7 +51,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseB">
-								           B站点
+								      1500站
 								        </button>
 								      </h5>
 									</div>
@@ -72,7 +73,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseC">
-								           C站点
+								          立磨站
 								        </button>
 								      </h5>
 									</div>
@@ -93,7 +94,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseD">
-								           D站点
+								          小立加站
 								        </button>
 								      </h5>
 									</div>
@@ -115,7 +116,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseZ">
-								           Z站点
+								           终点站
 								        </button>
 								      </h5>
 									</div>
@@ -150,7 +151,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseAA">
-								           A站点
+								           起点站
 								        </button>
 								      </h5>
 									</div>
@@ -172,7 +173,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseBB">
-								           B站点
+								      1500站
 								        </button>
 								      </h5>
 									</div>
@@ -194,7 +195,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseCC">
-								           C站点
+								           立磨站
 								        </button>
 								      </h5>
 									</div>
@@ -215,7 +216,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseDD">
-								           D站点
+								           小立加站
 								        </button>
 								      </h5>
 									</div>
@@ -237,7 +238,7 @@
 									<div class="card-header">
 										<h5 class="mb-0">
 								        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseZZ">
-								           Z站点
+								           终点站
 								        </button>
 								      </h5>
 									</div>
@@ -289,6 +290,7 @@
 					<button class="btn btn-outline-danger" id="end_task">暂停任务</button>
 					<button class="btn btn-outline-danger" id="rec_task">恢复任务</button>
 					<button class="btn btn-outline-danger" id="reboot_task">系统恢复</button>
+					<button class="btn btn-outline-danger" id="change_state">站点库存状态管理</button>
 					<hr />
 					<footer class="blockquote-footer">系统恢复：AGV已经没有任务在运行，但是系统却不能发送任务，此时系统可能出现故障，执行 <span class="text-danger">系统恢复</span> 以保证系统恢复正常</footer>
 				</div>
@@ -296,8 +298,10 @@
 		</div>
 		<script src="/rs/lib/jquery.min.js"></script>
 		<script src="/rs/lib/popper.min.js"></script>
-		<script src="/rs/lib/bootstrap/js/bootstrap.min.js"></script>
 		<script src="/rs/lib/jsplumb.min.js"></script>
+		<script src="/rs/lib/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/rs/lib/bootstrap-table/bootstrap-table.min.js"></script>
+		<script src="/rs/lib/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
 		<script src="/rs/lib/layer/layer.js"></script>
 		<script src="/rs/js/com.js"></script>
 		<script src="/rs/js/frame.js"></script>

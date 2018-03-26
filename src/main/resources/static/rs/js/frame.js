@@ -203,15 +203,15 @@ $(function() {
 	}
 
 	// 连线重绘
-	// $(".btn-link").click(function(e) {
-	// e.preventDefault()
-	// resetConnect()
-	// var endPos = getEndPos()
-	// var startPos = getStartPos()
-	// if(startPos && endPos) {
-	// connectLine(startPos, endPos)
-	// }
-	// })
+	//	$(".btn-link").click(function(e) {
+	//		e.preventDefault()
+	//		resetConnect()
+	//		var endPos = getEndPos()
+	//		var startPos = getStartPos()
+	//		if(startPos && endPos) {
+	//			connectLine(startPos, endPos)
+	//		}
+	//	})
 
 	/**
 	 * WebSocket stream
@@ -219,7 +219,7 @@ $(function() {
 	function getWsURI() {
 		var loc = window.location;
 		var uri = "ws://" + loc.host;
-		return uri.slice(0,uri.lastIndexOf(":")) + ":9321"
+		return uri.slice(0, uri.lastIndexOf(":")) + ":9321"
 	}
 
 	function connect() {
@@ -230,7 +230,7 @@ $(function() {
 		};
 
 		ws.onmessage = function(e) {
-			console.log('Message:', e.data);
+			// console.log('Message:', e.data);
 			// 实时更新数据状态
 			var data = JSON.parse(e.data)
 			var name = data['task']
@@ -271,7 +271,7 @@ $(function() {
 	function sendRequestForUpdateStatus() {
 		$.ajax({
 				method: "GET",
-				url: COMJS.CTX_PATH + "/task/refreshStatus/"
+				url: COMJS.CTX_PATH + "/task/refreshStatus"
 			})
 			.done(function(resp) {
 				if(resp.code == 1) {
@@ -303,6 +303,105 @@ $(function() {
 			}
 
 		}
+	}
+
+	/**
+	 * 修改仓库状态
+	 * 
+	 */
+	$("#change_state").click(function() {
+		var conf = {
+			htmUrl: '/rs/form/list.html', // 模板路径
+			title: '站点库存状态管理',
+			shadeClose: true, //点击遮罩关闭
+			closeBtn: 1, // 不显示右上角关闭按钮
+			area: ['1000px', '800px'],
+			success: function(layero, index) {
+				initTable()
+			}
+		}
+		COMJS.readform(conf);
+	})
+
+	function initTable() {
+		var $table = $('#table');
+		$table.bootstrapTable({
+			url: COMJS.CTX_PATH + "/task/refreshStatus",
+			search: true,
+			columns: [{
+				field: 'name',
+				title: '站点',
+				align: 'center'
+			}, {
+				field: 'status',
+				title: '仓库状态',
+				align: 'center',
+				formatter: function(value, row, index) {
+					if(value == 0) {
+						return '空仓'
+					}
+					return '<h5><span class="text-danger">满仓</span></h5>'
+				}
+			}, {
+				field: 'operate',
+				title: '操作',
+				align: 'center',
+				events: {
+					'click .full': function(e, value, row, index) {
+						// 设为满仓
+						sendRequestSetSiteState(row['name'], 1, function() {
+							// 刷新表格
+							$table.bootstrapTable('refresh', {
+								silent: true
+							})
+							// 刷新主页列表
+							sendRequestForUpdateStatus()
+						});
+					},
+					'click .empty': function(e, value, row, index) {
+						// 设为空仓
+						sendRequestSetSiteState(row['name'], 0, function() {
+							// 刷新表格
+							$table.bootstrapTable('refresh', {
+								silent: true
+							})
+							// 刷新主页列表
+							sendRequestForUpdateStatus()
+						});
+					}
+				},
+				formatter: operateFormatter
+			}]
+		});
+	}
+
+	function operateFormatter(value, row, index) {
+		var full = '<a class="btn btn-outline-danger full" href="javascript:void(0)">设为满仓</a>';
+		var empty = '<a class="btn btn-outline-primary empty" href="javascript:void(0)">设为空仓</a>';
+		if(row['status'] == 0) {
+			return full;
+		}
+		return empty;
+	}
+
+	function sendRequestSetSiteState(site, status, callback) {
+		var status_text = status == 0 ? '空仓' : '满仓';
+		var promote = '您确定要把' + site + '设为' + status_text + '吗?';
+		COMJS.confirm(promote, function(index) {
+			$.ajax({
+					method: "POST",
+					url: COMJS.CTX_PATH + "/task/updateStatus/" + site + '/' + status
+				})
+				.done(function(resp) {
+					layer.close(index);
+					if(resp.code == 1) {
+						console.error(resp.msg);
+						COMJS.alert('设置失败')
+					} else {
+						callback()
+					}
+				});
+		})
 	}
 
 })

@@ -7,6 +7,10 @@
 	text-align: center;
 }
 
+body .layer-unvisiable {
+	background: none;
+	box-shadow: none;
+}
 
 .full {
     background-color: #dc3545!important;

@@ -9,9 +9,9 @@ var COMJS = (function() {
 			skin: 'demo-class',
 			icon: 3,
 			anim: 0
-		}, function() {
+		}, function(index) {
 			if(myfunc && $.isFunction(myfunc)) {
-				myfunc()
+				myfunc(index)
 			}
 		}, function() {
 			layer.close()
@@ -35,26 +35,39 @@ var COMJS = (function() {
 		})
 	}
 
-//	var _success = function(msg) {
-//		msg = msg || '命令执行成功'
-//		var msg = '<h5>' + msg + ',您是否需要关闭窗口？' + '</h5>'
-//		layer.confirm(msg, {
-//			time: 20000, //20s后自动关闭
-//			btn: ['关闭', '继续'] //按钮
-//		}, function(index) {
-//			layer.closeAll()
-//		}, function() {
-//
-//		})
-//	}
-	
 	var _success = function(msg) {
 		msg = msg || '命令执行成功'
 		var msg = '<h5>' + msg + '</h5>'
+		//		layer.confirm(msg, {
+		//			time: 20000, //20s后自动关闭
+		//			btn: ['关闭', '继续'] //按钮
+		//		}, function(index) {
+		//			layer.closeAll()
+		//		}, function() {
+		//
+		//		})
 		layer.alert(msg, {
 			icon: 1,
 			area: ['500px', '250px'],
 		})
+	}
+
+	// 读取表单模板
+	var _readform = function(conf) {
+		if(!conf || !conf.htmUrl) {
+			layer.alert('配置为空或缺少模板路径', {
+				icon: 2
+			});
+			return
+		}
+		$.get(conf.htmUrl, function(tplHtm) {
+			var newConf = $.extend(true, {
+				type: 1,
+				area: ['550px', '400px'], // 默认窗口尺寸
+				content: tplHtm //注意，如果str是object，那么需要字符拼接。
+			}, conf);
+			layer.open(newConf);
+		});
 	}
 
 	return {
@@ -62,6 +75,7 @@ var COMJS = (function() {
 		confirm: _confirm,
 		alert: _alert,
 		success: _success,
-		error: _error
+		error: _error,
+		readform: _readform
 	}
 })()
