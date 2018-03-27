@@ -46,7 +46,7 @@ public class MainLauncher {
 	@Inject
 	protected Dao dao;
 
-	@At("/")
+	@At({ "/", "/A", "/B", "/C", "D", "Z" })
 	@Ok("beetl:/index.html")
 	public void index() {
 	}

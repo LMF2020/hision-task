@@ -3,6 +3,12 @@ $(function() {
 	jsPlumb.ready(function() {
 
 	});
+	
+	// 根据locationURL 初始化页面
+	initPage()
+	
+	var full = '<a class="btn btn-outline-danger full" href="javascript:void(0)">设为满仓</a>';
+	var empty = '<a class="btn btn-outline-primary empty" href="javascript:void(0)">设为空仓</a>';
 
 	var _all_start_btn = $('#start_site .list-group-item')
 	var _all_end_btn = $('#end_site .list-group-item')
@@ -239,7 +245,7 @@ $(function() {
 			var error = data['task_error']
 
 			$("#current_task").text(name)
-			$("#current_status").text(isfinished == '1' ? '已停止' : '进行中')
+			$("#current_status").text(isfinished == 1 ? '已停止' : '进行中')
 			$("#current_battery").text(battery + '%')
 
 		};
@@ -376,8 +382,6 @@ $(function() {
 	}
 
 	function operateFormatter(value, row, index) {
-		var full = '<a class="btn btn-outline-danger full" href="javascript:void(0)">设为满仓</a>';
-		var empty = '<a class="btn btn-outline-primary empty" href="javascript:void(0)">设为空仓</a>';
 		if(row['status'] == 0) {
 			return full;
 		}
@@ -402,6 +406,48 @@ $(function() {
 					}
 				});
 		})
+	}
+	
+	// 页面初始化
+	function initPage() {
+		var loc = window.location;
+		var path = loc.pathname;
+		// console.log(loc)
+		switch(path) {
+			case "/A":
+				switchSite('start', ['B', 'C', 'D', 'Z'], false);
+				switchSite('end', ['A'], false);
+				break;
+			case "/B":
+				switchSite('start', ['A', 'C', 'D', 'Z'], false);
+				switchSite('end', ['B'], false);
+				break;
+			case "/C":
+				switchSite('start', ['B', 'A', 'D', 'Z'], false);
+				switchSite('end', ['C'], false);
+				break;
+			case "/D":
+				switchSite('start', ['B', 'C', 'A', 'Z'], false);
+				switchSite('end', ['D'], false);
+				break;
+			case "/Z":
+				switchSite('start', ['B', 'C', 'D', 'A'], false);
+				switchSite('end', ['Z'], false);
+				break;
+			default:
+				console.log(path)
+		}
+	}
+
+	function switchSite(prefix, siteList, isShow) {
+		var len = siteList.length;
+		for(var i = 0, len; i < len; i++) {
+			if(isShow) {
+				$("#" + prefix + '_' + siteList[i]).show()
+			} else {
+				$("#" + prefix + '_' + siteList[i]).hide()
+			}
+		}
 	}
 
 })
