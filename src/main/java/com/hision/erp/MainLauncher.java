@@ -19,15 +19,19 @@ import org.nutz.mvc.annotation.Filters;
 import org.nutz.mvc.annotation.Ok;
 import org.nutz.mvc.filter.CrossOriginFilter;
 
+import com.google.common.collect.Lists;
+import com.hision.erp.bean.Task;
 import com.hision.erp.bean.TaskSite;
+import com.hision.erp.bean.TaskStatus;
 import com.hision.erp.client.Const;
 import com.hision.erp.client.MessageClient;
+import com.hision.erp.service.TaskService;
 import com.hision.erp.util.Result;
 import com.hision.erp.websocket.WsMsgHandler;
 import com.hision.erp.websocket.WsMsgStarter;
 
 /**
- * Launcher Created by Jed on 2018/03/17.
+ * Created by Jed on 2018/03/17.
  *
  */
 @IocBean(create = "init", depose = "depose")
@@ -45,6 +49,9 @@ public class MainLauncher {
 
 	@Inject
 	protected Dao dao;
+
+	@Inject
+	TaskService taskService;
 
 	@At({ "/", "/A", "/B", "/C", "D", "Z" })
 	@Ok("beetl:/index.html")
@@ -183,6 +190,84 @@ public class MainLauncher {
 			} else {
 				return Result.error();
 			}
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	// 查询任务列表
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/list")
+	@Ok("json")
+	public Result listTask() {
+		try {
+			List<Task> beanList = taskService.listAll();
+			return Result.success("", beanList);
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/add/?")
+	@Ok("json")
+	public Result addTask(String taskName) {
+		try {
+			taskService.add(taskName);
+			// 没有任务在执行就select一个任务
+			TaskStatus taskStatus = Const.getCurrentUnfinishedTask();
+			if(taskStatus == null) {
+				Const.findNextTaskAndSend();
+			}
+			return Result.success();
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/clear")
+	@Ok("json")
+	public Result clearTask() {
+		try {
+			taskService.clearAll();
+			return Result.success();
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/delete/?")
+	@Ok("json")
+	public Result deleteTask(String id) {
+		try {
+			taskService.delete(Lists.newArrayList(id));
+			return Result.success();
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/clearFinished")
+	@Ok("json")
+	public Result clearFinishedTask() {
+		try {
+			taskService.clearFinished();
+			return Result.success();
+		} catch (Exception e) {
+			return Result.error(e.getMessage());
+		}
+	}
+
+	@Filters(@By(type = CrossOriginFilter.class))
+	@At("/task/top/?")
+	@Ok("json")
+	public Result topTask(String id) {
+		try {
+			taskService.top(id);
+			return Result.success();
 		} catch (Exception e) {
 			return Result.error(e.getMessage());
 		}

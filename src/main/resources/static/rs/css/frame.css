@@ -13,10 +13,32 @@ body .layer-unvisiable {
 }
 
 .full {
-    background-color: #dc3545!important;
-    color: white;
+	background-color: #dc3545!important;
+	color: white;
 }
 
-body .demo-class .layui-layer-btn{border-top:1px solid #E9E7E7}
-body .demo-class .layui-layer-btn a{background:#f8f9fa;}
-body .demo-class .layui-layer-btn .layui-layer-btn1{background:#f8f9fa;}
+body .demo-class .layui-layer-btn {
+	border-top: 1px solid #E9E7E7
+}
+
+body .demo-class .layui-layer-btn a {
+	background: #f8f9fa;
+}
+
+body .demo-class .layui-layer-btn .layui-layer-btn1 {
+	background: #f8f9fa;
+}
+
+.docker {
+	position: absolute;
+	text-align: center;
+	top: 100px;
+	right: 0;
+	width: 340px;
+	height: 500px;
+}
+
+.docker span {
+	font-weight: bold;
+	color: darkblue;
+}

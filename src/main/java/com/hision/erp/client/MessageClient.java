@@ -152,6 +152,7 @@ public class MessageClient {
 	 * @return
 	 */
 	public synchronized Result send(String message) {
+		boolean isForceSend = "0A-0A,0A-0B,0A-0C,0A-0D,0B-0A,0C-0A,0D-0A".contains(message);
 		// 组装待发送消息
 		message = Const.createSendCommad(message);
 		// 发送消息
@@ -161,7 +162,7 @@ public class MessageClient {
 		}
 
 		// 判断是否有任务正在执行
-		if (checkHasTaskUnfinished()) {
+		if (checkHasTaskUnfinished() && !isForceSend) {
 			// 拿出正在执行的任务，返回给界面
 			TaskStatus taskStatus = Const.getCurrentUnfinishedTask();
 			log.error("正在发送命令：但是当前有任务正在执行，不能发送新任务：TASK： " + taskStatus.getTask() + "，CMD：" + taskStatus.getCmd());

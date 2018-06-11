@@ -6,7 +6,8 @@
 		<title>海天精工任务调度系统</title>
 		<link rel="stylesheet" href="/rs/lib/bootstrap/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/rs/lib/bootstrap-table/bootstrap-table.min.css" />
-		<link rel="stylesheet" href="/rs/lib/open-iconic/font/css/open-iconic-bootstrap.min.css">
+		<!-- <link rel="stylesheet" href="/rs/lib/open-iconic/font/css/open-iconic-bootstrap.min.css"> -->
+		<link rel="stylesheet" href="/rs/lib/layui/css/layui.css"/>		
 		<link rel="stylesheet" href="/rs/css/frame.css" />
 	</head>
 
@@ -259,36 +260,43 @@
 					</div>
 				</div>
 				<div class="col-sm-4">
-					<h2 class="display-4 mb-5">AGV前置任务</h2>
+					<h2 class="display-5 mb-1">手工任务</h2>
 					<div id="pre_task">
+						<hr />
+						<button id="0A-0B" type="button" class="btn btn-outline-success btn-lg">A→B</button>
+						<button id="0A-0C" type="button" class="btn btn-outline-success btn-lg">A→C</button>
+						<button id="0A-0D" type="button" class="btn btn-outline-success btn-lg">A→D</button>
 						<button id="0A-0A" type="button" class="btn btn-outline-success btn-lg">调头</button>
-						<button id="0A-0B" type="button" class="btn btn-outline-success btn-lg">A站到B站</button>
-						<button id="0A-0C" type="button" class="btn btn-outline-success btn-lg">A站到C站</button>
-						<button id="0A-0D" type="button" class="btn btn-outline-success btn-lg">A站到D站</button>
-						<button id="0A-0Z" type="button" class="btn btn-outline-success btn-lg">A站到Z站</button>
+						<hr />
+						<button id="0B-0A" type="button" class="btn btn-outline-success btn-lg">B→A</button>
+						<button id="0C-0A" type="button" class="btn btn-outline-success btn-lg">C→A</button>
+						<button id="0D-0A" type="button" class="btn btn-outline-success btn-lg">D→A</button>
 					</div>
 					<hr />
-					<h2 class="display-4 mb-5">起始站点 -> 目标站点</h2>
-					<div class="alert alert-success" role="alert" id="task">
+					<h2 class="display-5 mb-1">站点选择</h2>
+					<hr />
+					<div class="alert alert-success" role="alert" id="task" style="font-size: 20px;font-weight: 900;">
 						您当前尚未选择起始站点与目标站点
 					</div>
 					<input class="btn btn-outline-primary" id="submit_task" value="提交任务">
 					<input class="btn btn-outline-primary" id="clear_task" value="重新选择">
 					<hr />
-					<h2 class="display-4 mb-5">任务状态</h2>
-					<div class="alert alert-success">
-						<h4 class="alert-heading">AGV当前任务：<span id="current_task" class="text-danger">待定</span></h4>
+					<h2 class="display-5 mb-1">车子信息</h2>
+					<hr />
+					<div class="alert alert-success" style="display: none;">
+						<h4 class="alert-heading">当前任务：<span id="current_task" class="text-danger">待定</span></h4>
 					</div>
-					<div class="alert alert-success">
+					<div class="alert alert-success" style="display: none;">
 						<h4 class="alert-heading">AGV任务状态：<span id="current_status" class="text-danger">待定</span></h4>
 					</div>
 					<div class="alert alert-success">
-						<h4 class="alert-heading">AGV电量：<span id="current_battery" class="text-danger">待定</span></h4>
+						<h4 class="alert-heading">电量：<span id="current_battery" class="text-danger">100</span></h4>
 					</div>
 					<hr />
-					<h2 class="display-4 mb-5">其他操作</h2>
+					<h2 class="display-5 mb-1">其他操作</h2>
+					<hr />
 					<button class="btn btn-outline-danger" id="end_task">暂停任务</button>
-					<button class="btn btn-outline-danger" id="rec_task">恢复任务</button>
+					<button class="btn btn-outline-danger" id="rec_task">恢复暂停任务</button>
 					<button class="btn btn-outline-danger" id="reboot_task">系统恢复</button>
 					<button class="btn btn-outline-danger" id="change_state">站点库存状态管理</button>
 					<hr />
@@ -296,6 +304,17 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- 任务栏-->
+		<div class="docker">
+			<span>任务列表</span>
+			<table id="tasklist" lay-filter="tasklist" style="overflow-y:hidden"></table>
+		</div>
+		<!--- 表格按钮 -->
+		<script type="text/html" id="mytool">
+			<i lay-event="top" style="font-size: 18px; color: #1E9FFF;">置顶</i>
+			<i lay-event="del" style="font-size: 18px; color: #1E9FFF;">删除</i>  
+		</script>
 		<script src="/rs/lib/jquery.min.js"></script>
 		<script src="/rs/lib/popper.min.js"></script>
 		<script src="/rs/lib/jsplumb.min.js"></script>
@@ -303,6 +322,7 @@
 		<script src="/rs/lib/bootstrap-table/bootstrap-table.min.js"></script>
 		<script src="/rs/lib/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
 		<script src="/rs/lib/layer/layer.js"></script>
+		<script src="/rs/lib/layui/layui.js"></script>
 		<script src="/rs/js/com.js"></script>
 		<script src="/rs/js/frame.js"></script>
 	</body>
