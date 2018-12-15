@@ -1,22 +1,7 @@
-# 简介
 
-本项目是一个maven工程, 可以通过eclipse/ideaJ等开发工具导入进行开发调试
-
-# 配置
-
-数据库连接地址以及websocket消息推送的端口等默认配置都在application.properties里
-打包后需要手工修改配置，在config/app.properties里修改，这里的配置会覆盖默认配置
-
-# 运行
-
-MainLauncher是程序入口,启动即可，浏览器访问: http://localhost:8022
- 
-# 环境
-
-* 必须JDK8
-* eclipse或idea等IDE开发工具,可选
-
-# 打包
-
-mvn clean package
+# AGV叉车任务调度（侧重于站点规划）
+## 简要概述：
+客户端通过socket协议与车载进行通讯，不同站点间发送任务，任务状态跟踪
+## 运行效果图：
+![image 程序运行效果图](https://github.com/LMF2020/hision-task/raw/master/doc/img/code.png)
 
